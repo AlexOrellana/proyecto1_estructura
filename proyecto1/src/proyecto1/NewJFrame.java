@@ -7,9 +7,11 @@ package proyecto1;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
 /**
@@ -21,6 +23,10 @@ public class NewJFrame extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame
      */
+    fsarraylist estudiantes = new fsarraylist(20);
+    fsarraylist estudiantes_notas = new fsarraylist(20);
+    int random;
+    int position=0;
     public NewJFrame() {
         initComponents();
         this.setLocationRelativeTo(this);
@@ -30,7 +36,7 @@ public class NewJFrame extends javax.swing.JFrame {
         String nombre="";
         int cuenta=0;
         String carrera="";
-        int con=0,pos=0;
+        int con=1,pos=0;
         
         BufferedReader br = new BufferedReader (new FileReader("estudiantes.txt"));
       
@@ -38,15 +44,13 @@ public class NewJFrame extends javax.swing.JFrame {
  
         int numTokens = 0;
         StringTokenizer st = new StringTokenizer(s1);
- 
-        fsarraylist estudiantes = new fsarraylist(20);
+
         
         while (st.hasMoreTokens())
         {
             s2 = st.nextToken();
             numTokens++;
-            System.out.println ("    Palabra " + numTokens + " es: " + s2);
-            if (con==4) {
+            if (con==4 ) {
                 estudiantes.insert(new estudiante(nombre, cuenta, carrera), pos);
                 pos++;
                 con=1;
@@ -62,7 +66,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 con++;
             }
         }
-        
+        estudiantes.insert(new estudiante(nombre, cuenta, carrera), pos);
         
         br.close();
         }catch (Exception e){ //Catch de excepciones
@@ -166,7 +170,12 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        salir.setText("Salir");
+        salir.setText("guardar");
+        salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -201,6 +210,8 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void asignar_notaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_asignar_notaActionPerformed
         // TODO add your handling code here:
+        random=(int)(Math.random()*(estudiantes.size) + 0);
+        nombre_e.setText(estudiantes.get(random).toString());
         this.setVisible(false);
         asig_nota.setSize(500,400);
         asig_nota.setLocationRelativeTo(this);
@@ -211,13 +222,69 @@ public class NewJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         asig_nota.setVisible(false);
         this.setVisible(true);
+        nota.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void listoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listoActionPerformed
         // TODO add your handling code here:
-        asig_nota.setVisible(false);
-        this.setVisible(true);
+        boolean salir = false;
+        int crear = 0;
+        if ( estudiantes_notas.size()!=0) {
+           for (int i = 0; i < estudiantes_notas.size(); i++) {
+                if (((estudiante)estudiantes.get(random)).getNum_cuenta()==((estudiantes_notas)estudiantes_notas.get(i)).getNum_cuenta()) {
+                    crear=2;
+                }
+            } 
+        }else{
+            estudiantes_notas.insert(new estudiantes_notas(((estudiante)estudiantes.get(random)).getNum_cuenta()),position);
+            position++;  
+            crear=2;
+        }
+        if (crear!=2) {
+            estudiantes_notas.insert(new estudiantes_notas(((estudiante)estudiantes.get(random)).getNum_cuenta()),position);
+            position++;  
+        }
+        if(Integer.parseInt(nota.getText())>100 || Integer.parseInt(nota.getText())<0){
+            nota.setText("");
+        }else{
+            salir=true;
+        }
+        if (salir==true) {
+            for (int i = 0; i < estudiantes_notas.size(); i++) {
+                if (((estudiantes_notas)estudiantes_notas.get(i)).getNum_cuenta()==((estudiante)estudiantes.get(random)).getNum_cuenta()) {
+                    ((estudiantes_notas)estudiantes_notas.get(i)).agregar_nota(Integer.parseInt(nota.getText()));
+                }
+            }
+            nota.setText("");
+            asig_nota.setVisible(false);
+            this.setVisible(true);
+            crear=0;
+        }
     }//GEN-LAST:event_listoActionPerformed
+
+    private void salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirActionPerformed
+        // TODO add your handling code here:
+        try {
+            PrintWriter pw = new PrintWriter(new File("notas.csv"));
+            StringBuilder sb = new StringBuilder();
+            sb.append("id");
+            sb.append(',');
+            sb.append("Nota");
+            sb.append('\n');
+
+            for (int i = 0; i < estudiantes_notas.size(); i++) {
+                sb.append(((estudiantes_notas)estudiantes_notas.get(i)).getNum_cuenta());
+                sb.append(',');
+                sb.append(((estudiantes_notas)estudiantes_notas.get(i)).promedio());
+                sb.append('\n');   
+            }
+            pw.write(sb.toString());
+            pw.close();
+            System.out.println("guardado!");  
+        } catch (Exception e) {
+        }
+        
+    }//GEN-LAST:event_salirActionPerformed
 
     /**
      * @param args the command line arguments

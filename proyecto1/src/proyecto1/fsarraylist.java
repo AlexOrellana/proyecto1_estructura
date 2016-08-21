@@ -11,8 +11,8 @@ package proyecto1;
  */
 public class fsarraylist extends adtlist{
 
-    int capacity;
-    Object[] arr;
+    private int capacity;
+    protected Object[] arr;
 
     public fsarraylist(int capacity) {
         this.capacity = capacity;
@@ -36,7 +36,7 @@ public class fsarraylist extends adtlist{
             for (int i = size; i > p; i--) {
                 arr[i]=arr[i-1];
             }
-             arr[p]=e;
+            arr[p]=e;
         }
         size++;
         return true;
@@ -64,7 +64,11 @@ public class fsarraylist extends adtlist{
 
     @Override
     boolean isFull() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (size==capacity) {
+          return true;  
+        }else{
+          return false;
+        }
     }
 
     @Override
@@ -79,6 +83,10 @@ public class fsarraylist extends adtlist{
 
     @Override
     void clear() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void insert(estudiantes_notas estudiantes_notas) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

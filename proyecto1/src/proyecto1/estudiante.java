@@ -20,6 +20,10 @@ public class estudiante {
         this.carrera = carrera;
     }
 
+    public int getNum_cuenta() {
+        return num_cuenta;
+    }
+
     @Override
     public String toString() {
         return nombre + "," + num_cuenta + "," + carrera ;
